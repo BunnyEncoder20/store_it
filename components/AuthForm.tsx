@@ -25,6 +25,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
+// server actions
+import { createAccount } from "@/lib/actions/user.actions";
+
 // form schema
 const authFormSchema = (formType: FormType) => {
   return z.object({
@@ -40,6 +43,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
   // states
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [accountId, setAccountId] = useState("");
 
   // 1. Define your form.
   const formSchema = authFormSchema(type);
@@ -53,7 +57,20 @@ const AuthForm = ({ type }: { type: FormType }) => {
 
   // 2. Define a submit handler.
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+    setIsLoading(true);
+    setErrorMessage("");
+
+    try {
+      const user = await createAccount({
+        fullname: values.fullname || "",
+        email: values.email,
+      });
+      setAccountId(user.accountId);
+    } catch (error) {
+      console.error("Failed to create an account", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
