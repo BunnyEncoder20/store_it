@@ -1,4 +1,5 @@
 // node-appwrite
+"use server";
 
 import { cookies } from "next/headers";
 
