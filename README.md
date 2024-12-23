@@ -7,5 +7,6 @@
 ### Tech Stack
 
 - shadcn/ui
+- Appwrite
 
 ### Features
