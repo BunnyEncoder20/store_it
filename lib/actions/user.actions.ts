@@ -13,10 +13,13 @@
 import { cookies } from "next/headers";
 
 // appwrite imports
-import { createAdminClient } from "@/lib/appwrite";
+import { createAdminClient, createSessionClient } from "@/lib/appwrite";
 import { appwriteConfig } from "@/lib/appwrite/config";
 import { ID, Query } from "node-appwrite";
+
+// utils imports
 import { parseStringify } from "@/lib/utils";
+import { avatarPlaceholder } from "@/constants";
 
 // helper functions
 const getUserByEmail = async (email: string) => {
@@ -65,8 +68,7 @@ export const createAccount = async ({
       {
         fullname,
         email,
-        avatar:
-          "https://i.pinimg.com/736x/70/e3/7e/70e37e039ac35b9870b8d0cf84a1801c.jpg",
+        avatar: avatarPlaceholder,
         accountId,
       }
     );
@@ -89,5 +91,24 @@ export const verifySecret = async (accountId: string, password: string) => {
     return parseStringify({ sessionId: session.$id });
   } catch (error) {
     handleError(error, "There was a error in verifySecret action");
+  }
+};
+
+export const getCurrentUser = async () => {
+  try {
+    const { databases, account } = await createSessionClient();
+    const result = await account.get();
+    const user = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      [Query.equal("accountId", result.$id)]
+    );
+
+    if (user.total <= 0) return null;
+    console.log(user);
+    console.log(user.documents[0]);
+    return parseStringify(user.documents[0]);
+  } catch (error) {
+    handleError(error, "There was a error in getCurrentUser action");
   }
 };
