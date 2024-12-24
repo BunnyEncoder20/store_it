@@ -22,6 +22,9 @@ import FileUploader from "@/components/FileUploader";
 import { navItems } from "@/constants";
 import { cn } from "@/lib/utils";
 
+// server actions
+import { signOutUser } from "@/lib/actions/user.actions";
+
 // current component ⚛️
 const MobileNavigation = ({
   ownerID,
@@ -120,7 +123,9 @@ const MobileNavigation = ({
             <Button
               type="submit"
               className="sign-out-button"
-              onClick={() => {}}
+              onClick={async () => {
+                await signOutUser();
+              }}
             >
               <Image
                 src="/assets/icons/logout.svg"

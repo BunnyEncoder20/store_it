@@ -29,6 +29,7 @@ const getUserByEmail = async (email: string) => {
     appwriteConfig.userCollectionId,
     [Query.equal("email", [email])]
   );
+  console.log("Got users by email: ", email);
   return result.total > 0 ? result.documents[0] : null;
 };
 
@@ -41,6 +42,7 @@ export const sendEmailOTP = async (email: string) => {
   const { account } = await createAdminClient();
   try {
     const session = await account.createEmailToken(ID.unique(), email);
+    console.log("OTP sent successfully");
     return session.userId;
   } catch (error) {
     handleError(error, "There was a error in sendEmailOTP");
@@ -74,6 +76,7 @@ export const createAccount = async ({
     );
   }
 
+  console.log("User account created successfully");
   return parseStringify({ accountId });
 };
 
@@ -88,6 +91,7 @@ export const verifySecret = async (accountId: string, password: string) => {
       secure: true,
     });
 
+    console.log("User verified");
     return parseStringify({ sessionId: session.$id });
   } catch (error) {
     handleError(error, "There was a error in verifySecret action");
@@ -105,8 +109,23 @@ export const getCurrentUser = async () => {
     );
 
     if (user.total <= 0) return null;
+
+    console.log("Current user found");
     return parseStringify(user.documents[0]);
   } catch (error) {
     handleError(error, "There was a error in getCurrentUser action");
+  }
+};
+
+export const signOutUser = async () => {
+  try {
+    const { account } = await createSessionClient();
+
+    await account.deleteSession("current");
+    (await cookies()).delete("appwrite-session");
+
+    console.log("User logged out successfully");
+  } catch (error) {
+    handleError(error, "Error in signOutUser: ");
   }
 };

@@ -8,6 +8,9 @@ import { Button } from "@/components/ui/button";
 import Search from "@/components/Search";
 import FileUploader from "./FileUploader";
 
+// server actions
+import { signOutUser } from "@/lib/actions/user.actions";
+
 // current component ⚛️
 const Header = () => {
   return (
@@ -16,7 +19,12 @@ const Header = () => {
 
       <div className="header-wrapper">
         <FileUploader />
-        <form>
+        <form
+          action={async () => {
+            "use server";
+            await signOutUser();
+          }}
+        >
           <Button type="submit" className="sign-out-button">
             <Image
               src="/assets/icons/logout.svg"

@@ -16,7 +16,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "i.pinimg.com",
+        hostname: "encrypted-tbn0.gstatic.com",
       },
       {
         protocol: "https",

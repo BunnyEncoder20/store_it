@@ -82,6 +82,6 @@ export const sortTypes = [
 ];
 
 export const avatarPlaceholder =
-  "https://i.pinimg.com/736x/70/e3/7e/70e37e039ac35b9870b8d0cf84a1801c.jpg";
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVxStgDtu9SM9_C4nWmDE3mCFdkthrt-9fHg&s";
 
 export const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
