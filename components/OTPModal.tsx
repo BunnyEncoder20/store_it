@@ -1,5 +1,11 @@
+"use client";
+
 import React, { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+
+// server actions
+import { sendEmailOTP, verifySecret } from "@/lib/actions/user.actions";
 
 // UI import
 import {
@@ -28,11 +34,16 @@ const OTPModal = ({
   accountId: string;
   email: string;
 }) => {
+  // states
   const [isOpen, setIsOpen] = useState(true);
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleResendOTP = () => {
+  // router
+  const router = useRouter();
+
+  const handleResendOTP = async () => {
+    await sendEmailOTP(email);
   };
 
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -40,7 +51,9 @@ const OTPModal = ({
     setIsLoading(true);
 
     try {
-      // call api to verify OTP
+      const { sessionId } = await verifySecret(accountId, password);
+
+      if (sessionId) router.push("/");
     } catch (error) {
       console.error("Errorr in OTP Modal", error);
     } finally {

@@ -10,6 +10,7 @@
 */
 
 "use server";
+import { cookies } from "next/headers";
 
 // appwrite imports
 import { createAdminClient } from "@/lib/appwrite";
@@ -33,7 +34,7 @@ const handleError = (error: unknown, message: string) => {
   throw error;
 };
 
-const sendEmailOTP = async (email: string) => {
+export const sendEmailOTP = async (email: string) => {
   const { account } = await createAdminClient();
   try {
     const session = await account.createEmailToken(ID.unique(), email);
@@ -43,7 +44,7 @@ const sendEmailOTP = async (email: string) => {
   }
 };
 
-// Server Action: create Account
+// Server Actions 💪
 export const createAccount = async ({
   fullname,
   email,
@@ -72,4 +73,21 @@ export const createAccount = async ({
   }
 
   return parseStringify({ accountId });
+};
+
+export const verifySecret = async (accountId: string, password: string) => {
+  try {
+    const { account } = await createAdminClient();
+    const session = await account.createSession(accountId, password);
+    (await cookies()).set("appwrite-session", session.secret, {
+      path: "/",
+      httpOnly: true,
+      sameSite: "strict",
+      secure: true,
+    });
+
+    return parseStringify({ sessionId: session.$id });
+  } catch (error) {
+    handleError(error, "There was a error in verifySecret action");
+  }
 };
