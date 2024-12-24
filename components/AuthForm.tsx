@@ -27,6 +27,7 @@ import { Input } from "@/components/ui/input";
 
 // server actions
 import { createAccount } from "@/lib/actions/user.actions";
+import OTPModal from "./OTPModal";
 
 // form schema
 const authFormSchema = (formType: FormType) => {
@@ -167,7 +168,11 @@ const AuthForm = ({ type }: { type: FormType }) => {
           </div>
         </form>
       </Form>
+
       {/* Todo: OTP verification */}
+      {/*accountId*/ true && (
+        <OTPModal email={form.getValues("email")} accountId={accountId} />
+      )}
     </>
   );
 };
