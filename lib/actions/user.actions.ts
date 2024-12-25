@@ -21,7 +21,7 @@ import { ID, Query } from "node-appwrite";
 import { parseStringify } from "@/lib/utils";
 import { avatarPlaceholder } from "@/constants";
 
-// helper functions
+/*---------------------- helper functions ----------------------*/
 const getUserByEmail = async (email: string) => {
   const { databases } = await createAdminClient();
   const result = await databases.listDocuments(
@@ -49,7 +49,7 @@ export const sendEmailOTP = async (email: string) => {
   }
 };
 
-// Server Actions 💪
+/*---------------------- Server Actions 💪 ----------------------*/
 export const createAccount = async ({
   fullname,
   email,

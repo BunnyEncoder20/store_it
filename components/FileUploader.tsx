@@ -1,4 +1,4 @@
-"user client";
+"use client";
 
 import React, { useCallback, useState } from "react";
 import Image from "next/image";
@@ -6,9 +6,10 @@ import { useDropzone } from "react-dropzone";
 
 // UI imports
 import { Button } from "./ui/button";
+import Thumbnail from "./Thumbnail";
 
 // utils imports
-import { cn } from "@/lib/utils";
+import { cn, convertFileToUrl, getFileType } from "@/lib/utils";
 
 // current component ⚛️
 const FileUploader = ({
@@ -24,10 +25,20 @@ const FileUploader = ({
   const [files, setFiles] = useState<File[]>([]);
 
   // hook🪝
-  const onDrop = useCallback((acceptedFiles) => {
-    // Do something with the files
+  const onDrop = useCallback(async (acceptedFiles: File[]) => {
+    setFiles(acceptedFiles);
   }, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+
+  // functions
+  const handleRemoveFile = (
+    e: React.MouseEvent<HTMLImageElement, MouseEvent>,
+    fileName: string,
+  ) => {
+    e.stopPropagation();
+    // filter out the filename from the prevFiles state
+    setFiles((prevFiles) => prevFiles.filter((file) => file.name !== fileName));
+  };
 
   return (
     <div {...getRootProps()} className="cursor-pointer">
@@ -45,9 +56,45 @@ const FileUploader = ({
       </Button>
       {files.length > 0 && (
         <ul className="uploader-preview-list">
-          <h4 className="h4 text-light-100">Uplaoding</h4>
-          {files.map((file) => {
+          <h4 className="h4 text-light-100">Uploading</h4>
+          {files.map((file, index) => {
             const { type, extension } = getFileType(file.name);
+            return (
+              <li
+                key={`${file.name}-${index}`}
+                className="uploader-preview-item"
+              >
+                <div className="flex items-center gap-3">
+                  {/* circle filetype icon */}
+                  <Thumbnail
+                    type={type}
+                    extension={extension}
+                    url={convertFileToUrl(file)}
+                  />
+                  {/* file name */}
+                  <div className="preview-item-name">
+                    {file.name}
+
+                    {/* uploading gif */}
+                    <Image
+                      src="/assets/icons/file-loader.gif"
+                      alt="loader"
+                      height={26}
+                      width={80}
+                    />
+                  </div>
+                </div>
+
+                {/* Remove file from upload */}
+                <Image
+                  src="/assets/icons/remove.svg"
+                  alt="remove"
+                  height={24}
+                  width={24}
+                  onClick={(e) => handleRemoveFile(e, file.name)}
+                />
+              </li>
+            );
           })}
         </ul>
       )}
