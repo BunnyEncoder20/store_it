@@ -74,9 +74,9 @@ export const createAccount = async ({
         accountId,
       }
     );
+    console.log("User account created successfully");
   }
 
-  console.log("User account created successfully");
   return parseStringify({ accountId });
 };
 
@@ -100,20 +100,31 @@ export const verifySecret = async (accountId: string, password: string) => {
 
 export const getCurrentUser = async () => {
   try {
-    const { databases, account } = await createSessionClient();
+    const { account, databases } = await createSessionClient();
+
+    // Get the account details
     const result = await account.get();
+    console.log("Account Details:", result);
+
+    // Query user document
     const user = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionId,
       [Query.equal("accountId", result.$id)]
     );
 
-    if (user.total <= 0) return null;
+    console.log("User Query Result:", user);
+
+    if (user.total <= 0) {
+      console.warn("User document not found in database");
+      return null;
+    }
 
     console.log("Current user found");
     return parseStringify(user.documents[0]);
   } catch (error) {
-    handleError(error, "There was a error in getCurrentUser action");
+    console.error("Error in getCurrentUser:", error);
+    return null;
   }
 };
 
@@ -127,5 +138,22 @@ export const signOutUser = async () => {
     console.log("User logged out successfully");
   } catch (error) {
     handleError(error, "Error in signOutUser: ");
+  }
+};
+
+export const SignInUser = async (email: string) => {
+  try {
+    const existingUser = await getUserByEmail(email);
+
+    if (existingUser) {
+      console.log("User exists. Sending OTP");
+      await sendEmailOTP(email);
+      return parseStringify({ accountId: existingUser.accountId });
+    }
+
+    console.log("SignIn email User does not exist.");
+    return parseStringify({ accountId: null, error: "User not found." });
+  } catch (error) {
+    handleError(error, "There was a Error in SignInUser");
   }
 };

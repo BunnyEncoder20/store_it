@@ -12,7 +12,10 @@ import { getCurrentUser } from "@/lib/actions/user.actions";
 // curernt layout 🏠
 const layout = async ({ children }: { children: React.ReactNode }) => {
   const currentUser = await getCurrentUser();
-  if (!currentUser) redirect("/sign-in");
+  if (!currentUser) {
+    console.error("User not found");
+    redirect("/sign-in");
+  }
   console.log(currentUser);
 
   return (
