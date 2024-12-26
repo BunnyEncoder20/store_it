@@ -27,13 +27,13 @@ import { signOutUser } from "@/lib/actions/user.actions";
 
 // current component ⚛️
 const MobileNavigation = ({
-  ownerID,
+  $id: ownerId,
   accountId,
   fullname,
   avatar,
   email,
 }: {
-  ownerID: string;
+  $id: string;
   accountId: string;
   fullname: string;
   avatar: string;
@@ -117,7 +117,7 @@ const MobileNavigation = ({
 
           <div className="flex flex-col justify-between gap-5 pb-5">
             {/* file upload */}
-            <FileUploader />
+            <FileUploader ownerId={ownerId} accountId={accountId} />
 
             {/* sign out button */}
             <Button

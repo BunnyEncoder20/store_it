@@ -2,14 +2,22 @@
 
 import React, { useCallback, useState } from "react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useDropzone } from "react-dropzone";
 
 // UI imports
 import { Button } from "./ui/button";
 import Thumbnail from "./Thumbnail";
+import { useToast } from "@/hooks/use-toast";
 
 // utils imports
 import { cn, convertFileToUrl, getFileType } from "@/lib/utils";
+
+// constants
+import { MAX_FILE_SIZE } from "@/constants";
+
+// server actions
+import { uploadFile } from "@/lib/actions/file.actions";
 
 // current component ⚛️
 const FileUploader = ({
@@ -24,11 +32,51 @@ const FileUploader = ({
   // states
   const [files, setFiles] = useState<File[]>([]);
 
+  // toasts
+  const { toast } = useToast();
+
+  // path
+  const path = usePathname();
+
   // hook🪝
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     setFiles(acceptedFiles);
-  }, []);
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+
+    // there might be multiple files, so upload them one by one
+    const uploadPromises = acceptedFiles.map(async (file) => {
+      // filter out the files that are too large
+      if (file.size > MAX_FILE_SIZE) {
+        setFiles((prevFiles) => prevFiles.filter((f) => f.name !== file.name));
+        return toast({
+          description: (
+            <p className="body-2 text-white">
+              <span className="font-semibold">{file.name}</span>{"  "}
+              is too large. Max file size is 50MB.
+            </p>
+          ),
+          className: "error-toast",
+        });
+      }
+
+      return uploadFile({
+        file,
+        ownerId,
+        accountId,
+        path,
+      }).then((uploadedFile) => {
+        // if file is uplaoded successfully, remove from the list
+        if (uploadedFile) {
+          setFiles((prevFiles) =>
+            prevFiles.filter((f) => f.name !== file.name)
+          );
+        }
+      });
+    });
+
+    // call the upload file function
+    await Promise.all(uploadPromises);
+  }, [ownerId, accountId, path]);
+  const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   // functions
   const handleRemoveFile = (
@@ -98,9 +146,6 @@ const FileUploader = ({
           })}
         </ul>
       )}
-      {isDragActive
-        ? <p>Drop the files here ...</p>
-        : <p>Drag 'n' drop some files here, or click to select files</p>}
     </div>
   );
 };
