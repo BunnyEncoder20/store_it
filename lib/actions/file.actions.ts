@@ -4,16 +4,32 @@
 import { createAdminClient } from "../appwrite";
 import { appwriteConfig } from "../appwrite/config";
 import { InputFile } from "node-appwrite/file";
-import { ID } from "node-appwrite";
+import { ID, Models, Query } from "node-appwrite";
 
 // utils imports
 import { revalidatePath } from "next/cache";
 import { constructFileUrl, getFileType, parseStringify } from "../utils";
 
-// helper functions
+// actions imports
+import { getCurrentUser } from "./user.actions";
+
+/*---------------------- Helper Functions ----------------------*/
 const handleError = (message: string, error: unknown) => {
   console.error(error, message);
   throw error;
+};
+
+const createQueries = (currentUser: Models.Document) => {
+  const queries = [
+    Query.or([
+      Query.equal("ownerId", [currentUser.$id]),
+      Query.equal("users", [currentUser.email]),
+    ]),
+  ];
+
+  // Todo: Search, sort, limit
+
+  return queries;
 };
 
 /*---------------------- Server Actions 💪 ----------------------*/
@@ -65,5 +81,28 @@ export const uploadFile = async ({
     return parseStringify(newFile);
   } catch (error) {
     handleError("Error in uploadFile:", error);
+  }
+};
+
+export const getFiles = async () => {
+  const { databases } = await createAdminClient();
+  try {
+    const currentUser = await getCurrentUser();
+    if (!currentUser) throw new Error("User not found");
+    console.log("Fetching files for user: ", currentUser.fullname);
+
+    // get premade queries
+    const queries = createQueries(currentUser);
+
+    // making call to database
+    const files = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.filesCollectionId,
+      queries
+    );
+
+    return parseStringify(files);
+  } catch (error) {
+    handleError("Error in getFiles:", error);
   }
 };
