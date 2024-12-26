@@ -27,8 +27,8 @@ const Card = ({
           type={file.type}
           extension={file.extension}
           url={file.url}
-          classNames="size-20"
-          imageClassNames="size-11"
+          classNames="!size-20"
+          imageClassNames="!size-11"
         />
 
         <div className="flex flex-col items-end justify-between">

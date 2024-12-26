@@ -89,7 +89,7 @@ export const getFiles = async () => {
   try {
     const currentUser = await getCurrentUser();
     if (!currentUser) throw new Error("User not found");
-    console.log("Fetching files for user: ", currentUser.fullname);
+    // console.log("Fetching files for user: ", currentUser.fullname);
 
     // get premade queries
     const queries = createQueries(currentUser);
@@ -109,5 +109,29 @@ export const getFiles = async () => {
     return parseStringify(files);
   } catch (error) {
     handleError("Error in getFiles:", error);
+  }
+};
+
+export const renameFile = async ({
+  fileId,
+  name,
+  extension,
+  path,
+}: RenameFileProps) => {
+  const { databases } = await createAdminClient();
+  console.log("Renaming file: ", fileId);
+  try {
+    const newName = `${name}.${extension}`;
+    const updatedFile = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.filesCollectionId,
+      fileId,
+      { name: newName }
+    );
+    console.log("File renamed successfully: ", updatedFile);
+    revalidatePath(path);
+    return parseStringify(updatedFile);
+  } catch (error) {
+    handleError("Error in renameFile:", error);
   }
 };

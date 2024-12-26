@@ -104,7 +104,7 @@ export const getCurrentUser = async () => {
 
     // Get the account details
     const result = await account.get();
-    console.log("Account Details:", result);
+    // console.log("Account Details:", result);
 
     // Query user document
     const user = await databases.listDocuments(
@@ -113,7 +113,7 @@ export const getCurrentUser = async () => {
       [Query.equal("accountId", result.$id)]
     );
 
-    console.log("User Query Result:", user);
+    // console.log("User Query Result:", user);
 
     if (user.total <= 0) {
       console.warn("User document not found in database");

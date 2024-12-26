@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 // appwrite imports
 import { Models } from "node-appwrite";
@@ -15,24 +16,25 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "./ui/dropdown-menu";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+} from "./ui/dialog";
+import { Input } from "./ui/input";
+import { Button } from "./ui/button";
 
 // constants
 import { actionsDropdownItems } from "@/constants";
 
 // utils
 import { constructDownloadUrl } from "@/lib/utils";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
+
+// sevre actions
+import { renameFile } from "@/lib/actions/file.actions";
 
 // current component ⚛️
 const ActionDropdown = ({
@@ -47,6 +49,9 @@ const ActionDropdown = ({
   const [name, setName] = useState(file.name); //file name
   const [isLoading, setIsLoading] = useState(false);
 
+  // path
+  const path = usePathname();
+
   // additional modal functions
   const closeAllModals = () => {
     setIsModalOpen(false);
@@ -56,7 +61,30 @@ const ActionDropdown = ({
     // setEmail([]);
   };
 
-  const handleAction = async () => {};
+  const handleAction = async () => {
+    if (!action) return;
+    setIsLoading(true);
+    let success = false;
+
+    // action values mapped to their server action functions
+    const actions = {
+      rename: () =>
+        renameFile({ fileId: file.$id, name, extension: file.extension, path }),
+      share: () => {},
+      delete: () => {},
+    };
+
+    success = await actions[action.value as keyof typeof actions]();
+
+    if (success) {
+      console.log("Action succeeded: ", action.value);
+      closeAllModals();
+      setIsLoading(false);
+    } else {
+      console.error("Action failed: ", action.value);
+      setIsLoading(false);
+    }
+  };
 
   const renderDialogContent = () => {
     if (!action) return null;
