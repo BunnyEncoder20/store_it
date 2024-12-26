@@ -27,13 +27,16 @@ import {
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 
+// components imports
+import { FileDetails, ShareInput } from "./ActionsModalHelpers";
+
 // constants
 import { actionsDropdownItems } from "@/constants";
 
 // utils
 import { constructDownloadUrl } from "@/lib/utils";
 
-// sevre actions
+// server actions
 import { renameFile } from "@/lib/actions/file.actions";
 
 // current component ⚛️
@@ -48,6 +51,7 @@ const ActionDropdown = ({
   const [action, setAction] = useState<ActionType | null>(null);
   const [name, setName] = useState(file.name); //file name
   const [isLoading, setIsLoading] = useState(false);
+  const [emails, setEmails] = useState([]);
 
   // path
   const path = usePathname();
@@ -58,8 +62,11 @@ const ActionDropdown = ({
     setIsDropdownOpen(false);
     setAction(null);
     setName(file.name);
-    // setEmail([]);
+    setEmails([]);
   };
+
+  // Todo: complete this func
+  const handleRemoveUser = (email: string) => {};
 
   const handleAction = async () => {
     if (!action) return;
@@ -95,11 +102,25 @@ const ActionDropdown = ({
           <DialogTitle className="text-center text-light-100">
             {label}
           </DialogTitle>
+
+          {/* rename case */}
           {value === "rename" && (
             <Input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
+            />
+          )}
+
+          {/* file details case */}
+          {value === "details" && <FileDetails file={file} />}
+
+          {/* share case */}
+          {value === "share" && (
+            <ShareInput
+              file={file}
+              onInputChange={setEmails}
+              onRemove={handleRemoveUser}
             />
           )}
         </DialogHeader>
