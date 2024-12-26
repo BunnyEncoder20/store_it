@@ -37,7 +37,11 @@ import { actionsDropdownItems } from "@/constants";
 import { constructDownloadUrl } from "@/lib/utils";
 
 // server actions
-import { renameFile, updateFileUsers } from "@/lib/actions/file.actions";
+import {
+  deleteFile,
+  renameFile,
+  updateFileUsers,
+} from "@/lib/actions/file.actions";
 
 // current component ⚛️
 const ActionDropdown = ({
@@ -91,7 +95,12 @@ const ActionDropdown = ({
           emails,
           path,
         }),
-      delete: () => {},
+      delete: () =>
+        deleteFile({
+          fileId: file.$id,
+          bucketFileId: file.bucketFileId,
+          path,
+        }),
     };
 
     success = await actions[action.value as keyof typeof actions]();
@@ -135,6 +144,14 @@ const ActionDropdown = ({
               onInputChange={setEmails}
               onRemove={handleRemoveUser}
             />
+          )}
+
+          {/* delete case */}
+          {value === "delete" && (
+            <p className="delete-confirmation">
+              Are you sure you want to delete{"  "}
+              <span className="delete-file-name">{file.name}</span> ?
+            </p>
           )}
         </DialogHeader>
 

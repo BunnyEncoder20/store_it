@@ -159,3 +159,28 @@ export const updateFileUsers = async ({
     handleError("Error in updateFileUsers:", error);
   }
 };
+
+export const deleteFile = async ({
+  fileId,
+  bucketFileId,
+  path,
+}: DeleteFileProps) => {
+  const { databases, storage } = await createAdminClient();
+  console.log(`deleting file ${fileId}`);
+  try {
+    const deletedFile = await databases.deleteDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.filesCollectionId,
+      fileId
+    );
+    if (deletedFile) {
+      console.log("File deleted from databases. Deleting from bucket...");
+      await storage.deleteFile(appwriteConfig.bucketId, bucketFileId);
+    }
+    console.log("File detelted successfully");
+    revalidatePath(path);
+    return parseStringify({ status: "success" });
+  } catch (error) {
+    handleError("Error in deleteFile:", error);
+  }
+};

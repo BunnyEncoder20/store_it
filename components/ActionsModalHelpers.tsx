@@ -83,6 +83,7 @@ const ShareInput = ({
           placeholder="enter email address"
           onChange={(e) => onInputChange(e.target.value.trim().split(","))}
           className="share-input-field"
+          // disabled={file.ownerId !== currentUser.$id}
         />
 
         {/* shared with users */}
