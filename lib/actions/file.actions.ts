@@ -135,3 +135,27 @@ export const renameFile = async ({
     handleError("Error in renameFile:", error);
   }
 };
+
+export const updateFileUsers = async ({
+  fileId,
+  emails,
+  path,
+}: UpdateFileUsersProps) => {
+  const { databases } = await createAdminClient();
+  console.log(`updating ${fileId} users with:`);
+  emails.map((email) => console.log(email));
+
+  try {
+    const updatedFile = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.filesCollectionId,
+      fileId,
+      { users: emails }
+    );
+    console.log("Users updated successfully");
+    revalidatePath(path);
+    return parseStringify(updatedFile);
+  } catch (error) {
+    handleError("Error in updateFileUsers:", error);
+  }
+};

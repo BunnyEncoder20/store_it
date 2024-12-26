@@ -37,7 +37,7 @@ import { actionsDropdownItems } from "@/constants";
 import { constructDownloadUrl } from "@/lib/utils";
 
 // server actions
-import { renameFile } from "@/lib/actions/file.actions";
+import { renameFile, updateFileUsers } from "@/lib/actions/file.actions";
 
 // current component ⚛️
 const ActionDropdown = ({
@@ -51,7 +51,7 @@ const ActionDropdown = ({
   const [action, setAction] = useState<ActionType | null>(null);
   const [name, setName] = useState(file.name); //file name
   const [isLoading, setIsLoading] = useState(false);
-  const [emails, setEmails] = useState([]);
+  const [emails, setEmails] = useState<string[]>([]);
 
   // path
   const path = usePathname();
@@ -65,8 +65,16 @@ const ActionDropdown = ({
     setEmails([]);
   };
 
-  // Todo: complete this func
-  const handleRemoveUser = (email: string) => {};
+  const handleRemoveUser = async (email: string) => {
+    const updatedEmails = emails.filter((e) => e !== email);
+    const success = await updateFileUsers({
+      fileId: file.$id,
+      emails: updatedEmails,
+      path,
+    });
+    if (success) setEmails(updatedEmails);
+    // closeAllModals();
+  };
 
   const handleAction = async () => {
     if (!action) return;
@@ -77,7 +85,12 @@ const ActionDropdown = ({
     const actions = {
       rename: () =>
         renameFile({ fileId: file.$id, name, extension: file.extension, path }),
-      share: () => {},
+      share: () =>
+        updateFileUsers({
+          fileId: file.$id,
+          emails,
+          path,
+        }),
       delete: () => {},
     };
 
@@ -85,7 +98,7 @@ const ActionDropdown = ({
 
     if (success) {
       console.log("Action succeeded: ", action.value);
-      closeAllModals();
+      if (action.value !== "share") closeAllModals();
       setIsLoading(false);
     } else {
       console.error("Action failed: ", action.value);
