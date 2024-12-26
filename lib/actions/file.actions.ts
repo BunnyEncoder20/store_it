@@ -13,7 +13,7 @@ import { constructFileUrl, getFileType, parseStringify } from "../utils";
 // actions imports
 import { getCurrentUser } from "./user.actions";
 
-/*---------------------- Helper Functions ----------------------*/
+/*---------------------- Helper Functions 🧰 ----------------------*/
 const handleError = (message: string, error: unknown) => {
   console.error(error, message);
   throw error;
@@ -23,7 +23,7 @@ const createQueries = (currentUser: Models.Document) => {
   const queries = [
     Query.or([
       Query.equal("ownerId", [currentUser.$id]),
-      Query.equal("users", [currentUser.email]),
+      Query.contains("users", [currentUser.email]),
     ]),
   ];
 
@@ -100,6 +100,11 @@ export const getFiles = async () => {
       appwriteConfig.filesCollectionId,
       queries
     );
+    if (files) {
+      console.log("Files fetched successfully", files);
+    } else {
+      console.log("No files fetched");
+    }
 
     return parseStringify(files);
   } catch (error) {

@@ -8,24 +8,24 @@ const Thumbnail = ({
   type,
   extension,
   url = "",
-  imageClassNames,
   classNames,
+  imageClassNames,
 }: {
   type: string;
   extension: string;
   url: string;
-  imageClassNames?: string;
   classNames?: string;
+  imageClassNames?: string;
 }) => {
-  const isImage = type === "image" && extension === "svg";
+  const isImage = type === "image" && extension !== "svg";
 
   return (
     <figure className={cn("thumbnail", classNames)}>
       <Image
         src={isImage ? url : getFileIcon(extension, type)}
         alt="thumbnail"
-        height={100}
         width={100}
+        height={100}
         className={cn(
           "size-8 object-contain",
           imageClassNames,
