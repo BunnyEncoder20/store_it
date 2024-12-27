@@ -7,14 +7,20 @@ import Card from "@/components/Card";
 // actions imports
 import { getFiles } from "@/lib/actions/file.actions";
 import { Models } from "node-appwrite";
+import { getFileTypesParams } from "@/lib/utils";
 
 // Current Page 📄
-const page = async ({ params }: SearchParamProps) => {
+const page = async ({ params, searchParams }: SearchParamProps) => {
   // get the current page type
   const type = (await params)?.type as string || "";
+  const types = getFileTypesParams(type) as FileType[];
+
+  // get the search params
+  const searchText = ((await searchParams)?.query) as string || "";
+  const sort = ((await searchParams)?.sort) as string || "";
 
   // call server aciton
-  const files = await getFiles();
+  const files = await getFiles({ types, searchText, sort });
 
   return (
     <div className="page-container">
