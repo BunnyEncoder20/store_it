@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Models } from "node-appwrite";
 
 // utils imports
-import { convertFileSize, formatDateTime } from "@/lib/utils";
+import { cn, convertFileSize, formatDateTime } from "@/lib/utils";
 
 // component imports
 import Thumbnail from "./Thumbnail";
@@ -65,25 +65,38 @@ const ShareInput = ({
   file,
   onInputChange,
   onRemove,
+  currentUser,
 }: {
   file: Models.Document;
   onInputChange: React.Dispatch<React.SetStateAction<string[]>>;
   onRemove: (email: string) => void;
+  currentUser: Models.Document;
 }) => {
+  const isOwner = currentUser && file.ownerId.$id === currentUser.$id;
+  console.log("Sharing File: ", file);
+  console.log("currentUser:", currentUser.$id);
+  console.log("fileOwner:", file.ownerId.$id);
+
   return (
     <>
       <ImageThumbnail file={file} />
 
       <div className="share-wrapper">
         <p className="subtitle-2 pl-1 text-light-100">
-          Share file with other users
+          {isOwner
+            ? "Share file with other users"
+            : (
+              <span className="text-error">
+                Only Owner of file can share file
+              </span>
+            )}
         </p>
         <Input
           type="email"
           placeholder="enter email address"
           onChange={(e) => onInputChange(e.target.value.trim().split(","))}
-          className="share-input-field"
-          // disabled={file.ownerId !== currentUser.$id}
+          disabled={!isOwner}
+          className={cn("share-input-field", !isOwner && "bg-slate-300")}
         />
 
         {/* shared with users */}
@@ -101,18 +114,20 @@ const ShareInput = ({
                 className="flex items-center justify-between gap-2"
               >
                 <p className="subtitle-2">{email}</p>
-                <Button
-                  onClick={() => onRemove(email)}
-                  className="share-remove-user"
-                >
-                  <Image
-                    src="assets/icons/remove.svg"
-                    alt="remove"
-                    width={24}
-                    height={24}
-                    className="remove-icon"
-                  />
-                </Button>
+                {isOwner && (
+                  <Button
+                    onClick={() => onRemove(email)}
+                    className="share-remove-user"
+                  >
+                    <Image
+                      src="assets/icons/remove.svg"
+                      alt="remove"
+                      width={24}
+                      height={24}
+                      className="remove-icon"
+                    />
+                  </Button>
+                )}
               </li>
             ))}
           </ul>

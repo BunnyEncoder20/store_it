@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"; // Next.js Error: cause this page requires cookies(within the getCurrentUser action) it needs dynamic behaviour
+
 import React from "react";
 import { redirect } from "next/navigation";
 

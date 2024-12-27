@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -42,6 +42,7 @@ import {
   renameFile,
   updateFileUsers,
 } from "@/lib/actions/file.actions";
+import { getCurrentUser } from "@/lib/actions/user.actions";
 
 // current component ⚛️
 const ActionDropdown = ({
@@ -56,6 +57,15 @@ const ActionDropdown = ({
   const [name, setName] = useState(file.name); //file name
   const [isLoading, setIsLoading] = useState(false);
   const [emails, setEmails] = useState<string[]>([]);
+  const [currentUser, setcurrentUser] = useState<Models.Document>();
+
+  // useEffect
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      setcurrentUser(await getCurrentUser());
+    };
+    fetchCurrentUser();
+  }, []);
 
   // path
   const path = usePathname();
@@ -143,6 +153,7 @@ const ActionDropdown = ({
               file={file}
               onInputChange={setEmails}
               onRemove={handleRemoveUser}
+              currentUser={currentUser}
             />
           )}
 
