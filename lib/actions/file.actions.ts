@@ -26,6 +26,7 @@ const createQueries = (
   sort: string,
   limit?: number
 ) => {
+  // fetch user's files
   const queries = [
     Query.or([
       Query.equal("ownerId", [currentUser.$id]),
@@ -33,14 +34,18 @@ const createQueries = (
     ]),
   ];
 
+  // filter, search and limit
   if (types.length > 0) queries.push(Query.equal("type", types));
   if (searchText) queries.push(Query.contains("name", searchText));
   if (limit) queries.push(Query.limit(limit));
 
-  const [sortBy, orderBy] = sort.split("-");
-  queries.push(
-    orderBy === "acs" ? Query.orderAsc(sortBy) : Query.orderDesc(sortBy)
-  );
+  // sort
+  if (sort) {
+    const [sortBy, orderBy] = sort.split("-");
+    queries.push(
+      orderBy === "asc" ? Query.orderAsc(sortBy) : Query.orderDesc(sortBy)
+    );
+  }
 
   return queries;
 };
@@ -119,7 +124,7 @@ export const getFiles = async ({
       queries
     );
     if (files) {
-      console.log("Files fetched successfully", files);
+      console.log("Files fetched successfully");
     } else {
       console.log("No files fetched");
     }
