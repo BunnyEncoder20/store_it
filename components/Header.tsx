@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import { redirect } from "next/navigation";
 
 // UI imports
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,7 @@ const Header = ({
           action={async () => {
             "use server";
             await signOutUser();
+            redirect("/sign-in");
           }}
         >
           <Button type="submit" className="sign-out-button">

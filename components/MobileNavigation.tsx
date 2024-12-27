@@ -3,14 +3,12 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 
 // UI imports
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
-  SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
@@ -125,6 +123,7 @@ const MobileNavigation = ({
               className="sign-out-button"
               onClick={async () => {
                 await signOutUser();
+                redirect("/sign-in");
               }}
             >
               <Image
