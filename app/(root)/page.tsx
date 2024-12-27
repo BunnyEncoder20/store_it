@@ -1,17 +1,25 @@
 import Image from "next/image";
 import Link from "next/link";
+
+// appwrite
 import { Models } from "node-appwrite";
 
+// Components
 import ActionDropdown from "@/components/ActionDropdown";
-import { Chart } from "@/components/Chart";
-import { FormattedDateTime } from "@/components/FormattedDateTime";
-import { Thumbnail } from "@/components/Thumbnail";
+import Chart from "@/components/Chart";
+import FormattedDateTime from "@/components/FormattedDateTime";
+import Thumbnail from "@/components/Thumbnail";
 import { Separator } from "@/components/ui/separator";
-import { getFiles, getTotalSpaceUsed } from "@/lib/actions/file.actions";
+
+// utils
 import { convertFileSize, getUsageSummary } from "@/lib/utils";
 
+// Server actions
+import { getFiles, getTotalSpaceUsed } from "@/lib/actions/file.actions";
+
+// current component ⚛️
 const Dashboard = async () => {
-  // Parallel data fetching requests
+  // Parallel requests
   const [files, totalSpace] = await Promise.all([
     getFiles({ types: [], limit: 10 }),
     getTotalSpaceUsed(),

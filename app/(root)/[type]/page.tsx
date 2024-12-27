@@ -5,9 +5,9 @@ import Sort from "@/components/Sort";
 import Card from "@/components/Card";
 
 // actions imports
-import { getFiles } from "@/lib/actions/file.actions";
+import { getFiles, getTotalSpaceUsed } from "@/lib/actions/file.actions";
 import { Models } from "node-appwrite";
-import { getFileTypesParams } from "@/lib/utils";
+import { convertFileSize, getFileTypesParams } from "@/lib/utils";
 
 // Current Page 📄
 const page = async ({ params, searchParams }: SearchParamProps) => {
@@ -20,7 +20,16 @@ const page = async ({ params, searchParams }: SearchParamProps) => {
   const sort = ((await searchParams)?.sort) as string || "";
 
   // call server aciton
-  const files = await getFiles({ types, searchText, sort });
+  // const files = await getFiles({ types, searchText, sort });
+  const [files, totalSpace] = await Promise.all([
+    getFiles({ types, searchText, sort }),
+    getTotalSpaceUsed(),
+  ]);
+
+  // Calculate the total size for the current type
+  const currentTypeSize = types.reduce((total, fileType) => {
+    return total + (totalSpace[fileType]?.size || 0);
+  }, 0);
 
   return (
     <div className="page-container">
@@ -29,7 +38,10 @@ const page = async ({ params, searchParams }: SearchParamProps) => {
 
         <div className="total-size-section">
           <p className="body-1">
-            Total: <span className="h5">0 MB</span>
+            Total:{" "}
+            <span className="h5">
+              {convertFileSize(currentTypeSize) || "0 MB"}
+            </span>
           </p>
 
           <div className="sort-container">

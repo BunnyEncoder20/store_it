@@ -217,7 +217,7 @@ export const getTotalSpaceUsed = async () => {
     const files = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.filesCollectionId,
-      [Query.equal("owner", [currentUser.$id])]
+      [Query.equal("ownerId", [currentUser.$id])]
     );
 
     const totalSpace = {

@@ -75,7 +75,7 @@ const OTPModal = ({
           </AlertDialogTitle>
 
           <AlertDialogDescription className="subtitle-2 text-center text-light-100">
-            We&apos;ve sent an OTP to your email{" "}
+            We&apos;ve sent an verification code to your email{" "}
             <span className="pl-1 text-brand">{email}</span>
           </AlertDialogDescription>
         </AlertDialogHeader>
@@ -94,8 +94,8 @@ const OTPModal = ({
         <AlertDialogFooter>
           <div className="flex w-full flex-col gap-4">
             <AlertDialogAction
-              onClick={handleSubmit}
               type="button"
+              onClick={handleSubmit}
               className="shad-submit-btn h-12"
             >
               Submit
