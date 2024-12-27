@@ -17,6 +17,7 @@ import Thumbnail from "./Thumbnail";
 
 // utils imports
 import FormattedDateTime from "./FormattedDateTime";
+import { useDebounce } from "use-debounce";
 
 // Current Component ⚛️
 const Search = () => {
@@ -24,6 +25,7 @@ const Search = () => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Models.Document[]>([]);
   const [open, setOpen] = useState(false);
+  const [debouncedQuery] = useDebounce(query, 300);
   const router = useRouter();
   const path = usePathname();
   const searchParams = useSearchParams(); // cause we in client comp, we need to get search quries through useSearchParams hook
@@ -38,17 +40,17 @@ const Search = () => {
 
   useEffect(() => {
     const fetchFiles = async () => {
-      if (!query) {
+      if (debouncedQuery.length === 0) {
         setResults([]);
         setOpen(false);
         return router.push(path.replace(searchParams.toString(), ""));
       }
-      const files = await getFiles({ searchText: query });
+      const files = await getFiles({ types: [], searchText: debouncedQuery });
       setResults(files.documents);
       setOpen(true);
     };
     fetchFiles();
-  }, [query]);
+  }, [debouncedQuery]);
 
   // handlers
   const handleClickedItem = (file: Models.Document) => {
