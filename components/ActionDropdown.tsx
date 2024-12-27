@@ -57,7 +57,7 @@ const ActionDropdown = ({
   const [name, setName] = useState(file.name); //file name
   const [isLoading, setIsLoading] = useState(false);
   const [emails, setEmails] = useState<string[]>([]);
-  const [currentUser, setcurrentUser] = useState<Models.Document>();
+  const [currentUser, setcurrentUser] = useState<Models.Document | null>(null);
 
   // useEffect
   useEffect(() => {
@@ -148,7 +148,7 @@ const ActionDropdown = ({
           {value === "details" && <FileDetails file={file} />}
 
           {/* share case */}
-          {value === "share" && (
+          {value === "share" && currentUser && (
             <ShareInput
               file={file}
               onInputChange={setEmails}
