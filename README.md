@@ -4,13 +4,13 @@
 
 ---
 
-### Introduction
+## Introduction
 
 - A storage management and file sharing platform that lets users effortlessly upload, organize, and share files. Built with the latest Next.js 15 and the Appwrite Node SDK, utilizing advanced features for seamless file management.
 - Credentials used for dev:
   - varun.verma2024@gmail.com (OTP will be sent)
 
-### Tech Stack
+## Tech Stack
 
 - React 19
 - Next.js 15
@@ -19,7 +19,7 @@
 - ShadCN
 - TypeScript
 
-### Features
+## Features
 
 - User Authentication with Appwrite: Implement signup, login, and logout functionality using Appwrite's authentication system.
 
@@ -40,3 +40,14 @@
 - Modern Responsive Design: A fresh and minimalist UI that emphasizes usability, ensuring a clean aesthetic across all devices.
 
 and many more, including the latest React 19, Next.js 15 and Appwrite features alongside code architecture and reusability
+
+## Project ScreenShots
+
+![](./public/project_ss/1.png)
+![](./public/project_ss/2.png)
+![](./public/project_ss/3.png)
+![](./public/project_ss/4.png)
+![](./public/project_ss/5.png)
+![](./public/project_ss/6.png)
+![](./public/project_ss/7.png)
+![](./public/project_ss/8.png)
