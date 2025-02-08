@@ -51,3 +51,6 @@ and many more, including the latest React 19, Next.js 15 and Appwrite features a
 ![](./public/project_ss/6.png)
 ![](./public/project_ss/7.png)
 ![](./public/project_ss/8.png)
+![](./public/project_ss/9.png)
+![](./public/project_ss/10.png)
+![](./public/project_ss/11.png)
